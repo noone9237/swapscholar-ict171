@@ -6,6 +6,7 @@
 [![Flask](https://img.shields.io/badge/Flask-3.1-0B1F2A?logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
 [![Azure](https://img.shields.io/badge/Microsoft_Azure-Ubuntu_VM-0078D4?logo=microsoftazure&logoColor=white)](https://azure.microsoft.com/)
 [![HTTPS](https://img.shields.io/badge/HTTPS-Let's_Encrypt-2EC4A6?logo=letsencrypt&logoColor=white)](https://letsencrypt.org/)
+[![SwapScholar tests](https://github.com/noone9237/swapscholar-ict171/actions/workflows/tests.yml/badge.svg)](https://github.com/noone9237/swapscholar-ict171/actions/workflows/tests.yml)
 
 SwapScholar is a cloud-hosted student skill-exchange platform developed for the
 ICT171 Cloud Server Project. Students create accounts, publish skills they can
@@ -141,6 +142,15 @@ python -m unittest discover -s tests -v
 The project was also reviewed with Python compilation, Ruff, Bandit and
 JavaScript syntax checks.
 
+### Continuous integration
+
+The repository contains a GitHub Actions workflow at
+`.github/workflows/tests.yml`. Every push and pull request installs the declared
+dependencies and runs all eight tests on a fresh Ubuntu runner. The first public
+workflow run completed successfully.
+
+![Successful GitHub Actions test run](docs/screenshots/github-actions-tests.png)
+
 ## Maintenance and backup script
 
 The documented Bash script at
@@ -239,6 +249,9 @@ HTTP/HTTPS use ports `80` and `443`, while SSH administration uses port `22`.
 Certificate validity and the public HTTPS response are independently checked by
 the maintenance script.
 
+The complete screenshots, commands and interpretation are collected in
+[`docs/DNS_SSL_EVIDENCE.md`](docs/DNS_SSL_EVIDENCE.md).
+
 ## Project structure
 
 ```text
@@ -258,6 +271,7 @@ swapscholar-ict171/
 │   ├── swapscholar.env.example    # Safe environment template
 │   └── swapscholar-maintenance.sh # Verification and backup automation
 ├── docs/screenshots/              # Visible implementation evidence
+├── docs/DNS_SSL_EVIDENCE.md       # DNS, HTTPS and certificate proof
 ├── DEPLOYMENT_GUIDE.md
 └── VERIFICATION_REPORT.md
 ```
@@ -296,4 +310,3 @@ production databases and environment secrets. Never commit:
 - `instance/*.sqlite`
 - SSH private keys such as `*.pem`
 - real passwords, tokens or certificate private keys
-

@@ -121,3 +121,12 @@ The maintenance script was installed at
 - SQLite integrity result `ok`
 - Timestamped database backup created with SHA-256 checksum
 - Summary: `6 passed, 0 failed`
+
+### 7. GitHub continuous integration
+
+The public repository includes `.github/workflows/tests.yml`. GitHub Actions
+successfully installed the application dependencies and ran all eight tests on
+an Ubuntu runner after the workflow was committed.
+
+The green workflow result provides independently visible evidence that the
+repository can be tested from a clean environment.
