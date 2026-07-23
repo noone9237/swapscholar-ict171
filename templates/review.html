@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Review {{ reviewee_name }} · SwapScholar{% endblock %}
+{% block content %}
+<section class="auth-section grid-bg">
+    <div class="shell auth-grid compact">
+        <div class="auth-intro"><p class="eyebrow"><span></span> Trust layer</p><h1>How was your exchange?</h1><p>Your review helps future students arrange safer and more useful sessions.</p><div class="demo-note"><strong>{{ exchange['requested_skill_name'] }}</strong><span>Exchange with {{ reviewee_name }}</span><span>Completed {{ exchange['completed_at']|friendly_date }}</span></div></div>
+        <form method="post" class="form-card stack-form">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+            <div><p class="eyebrow"><span></span> Public review</p><h2>Review {{ reviewee_name }}</h2></div>
+            <fieldset class="rating-choice"><legend>Overall rating</legend>{% for rating in range(5, 0, -1) %}<label><input type="radio" name="rating" value="{{ rating }}" {{ 'checked' if rating == 5 }}><span>{{ rating }} ★</span></label>{% endfor %}</fieldset>
+            <label>What went well?<textarea name="comment" maxlength="500" rows="6" required placeholder="Describe the teaching, communication and usefulness of the session."></textarea><small><span data-character-count>0</span>/500 characters</small></label>
+            <div class="button-row end"><a class="button button-secondary" href="{{ url_for('dashboard') }}">Cancel</a><button class="button button-primary" type="submit">Publish review</button></div>
+        </form>
+    </div>
+</section>
+{% endblock %}

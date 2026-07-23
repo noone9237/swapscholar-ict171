@@ -1,0 +1,42 @@
+<article class="exchange-card">
+    <div class="exchange-card-head">
+        <div>
+            <span class="mini-avatar">{{ (exchange['requester_name'] if direction == 'incoming' else exchange['recipient_name'])|initials }}</span>
+            <p>
+                <strong>{{ exchange['requester_name'] if direction == 'incoming' else exchange['recipient_name'] }}</strong>
+                <small>{{ 'Requested from you' if direction == 'incoming' else 'You requested' }} · {{ exchange['created_at']|friendly_date }}</small>
+            </p>
+        </div>
+        <span class="status status-{{ exchange['status'] }}">{{ exchange['status']|capitalize }}</span>
+    </div>
+    <div class="exchange-skill-flow">
+        <div><small>{{ 'You teach' if direction == 'incoming' else 'You learn' }}</small><strong>{{ exchange['requested_skill_name'] }}</strong></div>
+        <span>{{ '⇄' if exchange['mode'] == 'swap' else '◆' }}</span>
+        <div><small>{{ 'You learn' if direction == 'incoming' else 'Exchange method' }}</small><strong>{{ exchange['offered_skill_name'] if exchange['mode'] == 'swap' else '1 time credit' }}</strong></div>
+    </div>
+    {% if exchange['message'] %}<p class="exchange-message">“{{ exchange['message'] }}”</p>{% endif %}
+    {% if exchange['preferred_schedule'] %}<p class="schedule-line">◷ Preferred: {{ exchange['preferred_schedule'] }}</p>{% endif %}
+    <div class="exchange-actions">
+        {% if direction == 'incoming' and exchange['status'] == 'pending' %}
+            <form method="post" action="{{ url_for('exchange_action', exchange_id=exchange['id']) }}"><input type="hidden" name="_csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="action" value="accept"><button class="button button-primary small" type="submit">Accept</button></form>
+            <form method="post" action="{{ url_for('exchange_action', exchange_id=exchange['id']) }}"><input type="hidden" name="_csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="action" value="reject"><button class="button button-secondary small" type="submit">Decline</button></form>
+        {% elif direction == 'outgoing' and exchange['status'] == 'pending' %}
+            <span class="muted">Waiting for a response</span>
+            <form method="post" action="{{ url_for('exchange_action', exchange_id=exchange['id']) }}"><input type="hidden" name="_csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="action" value="cancel"><button class="text-button danger" type="submit" data-confirm="Cancel this exchange request?">Cancel request</button></form>
+        {% elif exchange['status'] == 'accepted' %}
+            <a class="button button-secondary small" href="{{ url_for('exchange_messages', exchange_id=exchange['id']) }}">Message student</a>
+            {% set mine_complete = exchange['recipient_complete'] if direction == 'incoming' else exchange['requester_complete'] %}
+            {% set other_complete = exchange['requester_complete'] if direction == 'incoming' else exchange['recipient_complete'] %}
+            {% if not mine_complete %}
+                <form method="post" action="{{ url_for('exchange_action', exchange_id=exchange['id']) }}"><input type="hidden" name="_csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="action" value="complete"><button class="button button-primary small" type="submit">Confirm completion</button></form>
+            {% else %}<span class="success-text">✓ You confirmed completion</span>{% endif %}
+            <span class="muted">{{ 'Other student confirmed' if other_complete else 'Waiting for other student' }}</span>
+        {% elif exchange['status'] == 'completed' %}
+            <span class="success-text">✓ Exchange completed</span>
+            <a class="button button-secondary small" href="{{ url_for('exchange_messages', exchange_id=exchange['id']) }}">View messages</a>
+            {% if not exchange['reviewed_by_me'] %}<a class="button button-secondary small" href="{{ url_for('review_exchange', exchange_id=exchange['id']) }}">Leave review</a>{% else %}<span class="muted">Review submitted</span>{% endif %}
+        {% else %}
+            <span class="muted">No further action required</span>
+        {% endif %}
+    </div>
+</article>

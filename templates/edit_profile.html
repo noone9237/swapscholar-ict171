@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Edit profile · SwapScholar{% endblock %}
+{% block content %}
+<section class="page-hero slim grid-bg">
+    <div class="shell"><p class="eyebrow"><span></span> Your profile</p><h1>Make a clear first impression.</h1><p>Help other students understand what you study and when you are available.</p></div>
+</section>
+<section class="section">
+    <div class="shell narrow">
+        <form method="post" class="form-card stack-form">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+            <div class="form-grid">
+                <label>Full name<input name="name" maxlength="80" required value="{{ request.form.get('name', g.user['name']) }}"></label>
+                <label>University or community<input name="university" maxlength="120" required value="{{ request.form.get('university', g.user['university']) }}"></label>
+            </div>
+            <label>Course or study area<input name="course" maxlength="120" value="{{ request.form.get('course', g.user['course']) }}" placeholder="For example: Information Technology"></label>
+            <label>Availability<input name="availability" maxlength="160" value="{{ request.form.get('availability', g.user['availability']) }}" placeholder="For example: Weekdays after 4pm"></label>
+            <label>Short bio<textarea name="bio" maxlength="500" rows="5" placeholder="Tell students about your interests and teaching style.">{{ request.form.get('bio', g.user['bio']) }}</textarea><small><span data-character-count>0</span>/500 characters</small></label>
+            <div class="button-row end">
+                <a class="button button-secondary" href="{{ url_for('profile', user_id=g.user['id']) }}">Cancel</a>
+                <button class="button button-primary" type="submit">Save profile</button>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

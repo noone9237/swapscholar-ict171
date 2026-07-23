@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Chat with {{ other_name }} · SwapScholar{% endblock %}
+
+{% block content %}
+<section class="page-hero slim">
+    <div class="shell page-hero-split">
+        <div>
+            <p class="eyebrow"><span></span> Private exchange chat</p>
+            <h1>Chat with {{ other_name }}</h1>
+            <p>Arrange when, where or how you will complete this skill exchange.</p>
+        </div>
+        <a class="button button-secondary" href="{{ url_for('dashboard') }}">← Back to dashboard</a>
+    </div>
+</section>
+
+<section class="section chat-section">
+    <div class="shell narrow">
+        <article class="chat-exchange-summary">
+            <div>
+                <small>You are exchanging</small>
+                <strong>{{ exchange['requested_skill_name'] }}</strong>
+            </div>
+            <span>{{ '⇄' if exchange['mode'] == 'swap' else '◆' }}</span>
+            <div>
+                <small>{{ 'In return for' if exchange['mode'] == 'swap' else 'Exchange method' }}</small>
+                <strong>{{ exchange['offered_skill_name'] if exchange['mode'] == 'swap' else '1 time credit' }}</strong>
+            </div>
+            <b class="status status-{{ exchange['status'] }}">{{ exchange['status']|capitalize }}</b>
+        </article>
+
+        <div class="chat-panel">
+            <div class="chat-head">
+                <div class="mini-avatar">{{ other_name|initials }}</div>
+                <div>
+                    <h2>{{ other_name }}</h2>
+                    <p>Only the two students in this exchange can see these messages.</p>
+                </div>
+            </div>
+
+            <div class="message-thread" data-message-thread>
+                {% for message in messages %}
+                    {% set mine = message['sender_id'] == g.user['id'] %}
+                    <article class="chat-message {{ 'mine' if mine else 'theirs' }}">
+                        <div>
+                            <strong>{{ 'You' if mine else message['sender_name'] }}</strong>
+                            <time>{{ message['created_at'] }}</time>
+                        </div>
+                        <p>{{ message['body'] }}</p>
+                    </article>
+                {% else %}
+                    <div class="chat-empty">
+                        <span>✦</span>
+                        <h3>Start the conversation</h3>
+                        <p>Share a suitable time, meeting place or online-session link. Avoid posting sensitive personal information.</p>
+                    </div>
+                {% endfor %}
+                <span id="latest-message"></span>
+            </div>
+
+            <form class="chat-form" method="post">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                <label>
+                    <span class="sr-only">Message {{ other_name }}</span>
+                    <textarea name="body" rows="3" maxlength="1000" required placeholder="Write a private message…" aria-label="Message {{ other_name }}"></textarea>
+                    <small><span data-character-count>0</span>/1000</small>
+                </label>
+                <button class="button button-primary" type="submit">Send message <span>→</span></button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

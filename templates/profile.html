@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}{{ profile_user['name'] }} · SwapScholar{% endblock %}
+{% block content %}
+<section class="profile-hero grid-bg">
+    <div class="shell profile-header">
+        <div class="profile-avatar">{{ profile_user['name']|initials }}</div>
+        <div class="profile-main">
+            <p class="eyebrow"><span></span> Student profile</p>
+            <h1>{{ profile_user['name'] }}</h1>
+            <p>{{ profile_user['course'] or 'University community member' }} · {{ profile_user['university'] }}</p>
+            <div class="profile-meta">
+                <span>★ {{ '%.1f'|format(profile_user['rating']) if profile_user['review_count'] else 'New' }}{% if profile_user['review_count'] %} ({{ profile_user['review_count'] }} reviews){% endif %}</span>
+                <span>◷ {{ profile_user['availability'] or 'Availability to be arranged' }}</span>
+                <span>◆ {{ profile_user['credits'] }} time credits</span>
+            </div>
+        </div>
+        {% if g.user and g.user['id'] == profile_user['id'] %}
+            <div class="profile-actions">
+                <a class="button button-primary" href="{{ url_for('manage_skills') }}">Manage skills</a>
+                <a class="button button-secondary" href="{{ url_for('edit_profile') }}">Edit profile</a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="section">
+    <div class="shell profile-layout">
+        <aside class="profile-sidebar">
+            <div class="panel">
+                <p class="panel-label">About</p>
+                <p>{{ profile_user['bio'] or 'This student has not added a bio yet.' }}</p>
+            </div>
+            <div class="panel trust-panel">
+                <p class="panel-label">Trust & safety</p>
+                <ul>
+                    <li><i>✓</i> Community profile</li>
+                    <li><i>✓</i> Reviews from completed exchanges</li>
+                    <li><i>✓</i> Two-sided completion confirmation</li>
+                </ul>
+            </div>
+        </aside>
+        <div class="profile-content">
+            <section>
+                <div class="subheading"><div><p class="eyebrow"><span></span> Can teach</p><h2>Skills offered</h2></div><span>{{ offers|length }}</span></div>
+                <div class="list-grid">
+                    {% for skill in offers %}
+                        <article class="compact-skill">
+                            <span class="category-chip">{{ skill['category'] }}</span>
+                            <h3>{{ skill['name'] }}</h3>
+                            <p>{{ skill['description'] or 'Ask this student about a tailored session.' }}</p>
+                            <small>{{ skill['level'] or 'Open to all levels' }}</small>
+                            {% if g.user and g.user['id'] != profile_user['id'] %}
+                                <a href="{{ url_for('request_exchange', skill_id=skill['id']) }}">Request this skill →</a>
+                            {% elif not g.user %}
+                                <a href="{{ url_for('login', next=url_for('request_exchange', skill_id=skill['id'])) }}">Log in to request →</a>
+                            {% endif %}
+                        </article>
+                    {% else %}
+                        <div class="empty-inline">No offered skills have been added yet.</div>
+                    {% endfor %}
+                </div>
+            </section>
+            <section>
+                <div class="subheading"><div><p class="eyebrow"><span></span> Wants to learn</p><h2>Learning goals</h2></div><span>{{ wants|length }}</span></div>
+                <div class="tag-cloud">
+                    {% for skill in wants %}<span>{{ skill['name'] }} <small>· {{ skill['category'] }}</small></span>{% else %}<p class="muted">No learning goals added yet.</p>{% endfor %}
+                </div>
+            </section>
+            <section>
+                <div class="subheading"><div><p class="eyebrow"><span></span> Trust layer</p><h2>Student reviews</h2></div><span>{{ reviews|length }}</span></div>
+                <div class="review-list">
+                    {% for review in reviews %}
+                        <article class="review-card">
+                            <div><span class="mini-avatar">{{ review['reviewer_name']|initials }}</span><p><strong>{{ review['reviewer_name'] }}</strong><small>{{ review['created_at']|friendly_date }}</small></p><b>{{ '★' * review['rating'] }}<i>{{ '★' * (5 - review['rating']) }}</i></b></div>
+                            <p>{{ review['comment'] }}</p>
+                        </article>
+                    {% else %}
+                        <div class="empty-inline">Reviews appear here after completed exchanges.</div>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+    </div>
+</section>
+{% endblock %}

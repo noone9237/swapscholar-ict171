@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Request {{ requested_skill['name'] }} · SwapScholar{% endblock %}
+{% block content %}
+<section class="page-hero slim grid-bg">
+    <div class="shell"><p class="eyebrow"><span></span> Exchange request</p><h1>Learn {{ requested_skill['name'] }}.</h1><p>Send a clear request to {{ requested_skill['owner_name'] }} and choose how you will exchange value.</p></div>
+</section>
+<section class="section">
+    <div class="shell request-layout">
+        <aside class="request-summary">
+            <span class="category-chip">{{ requested_skill['category'] }}</span>
+            <h2>{{ requested_skill['name'] }}</h2>
+            <p>{{ requested_skill['description'] or 'A student-led session arranged around your goals.' }}</p>
+            <a class="person-line" href="{{ url_for('profile', user_id=requested_skill['owner_id']) }}">
+                <span class="mini-avatar">{{ requested_skill['owner_name']|initials }}</span>
+                <span><strong>{{ requested_skill['owner_name'] }}</strong><small>{{ requested_skill['university'] }}</small></span>
+            </a>
+        </aside>
+        <form method="post" class="form-card stack-form" data-exchange-form>
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+            <div><p class="eyebrow"><span></span> Request details</p><h2>Choose exchange type</h2></div>
+            <fieldset class="choice-row vertical-mobile">
+                <legend>How would you like to exchange?</legend>
+                <label><input type="radio" name="mode" value="swap" checked><span><b>Mutual skill swap</b><small>You teach a skill in return</small></span></label>
+                <label><input type="radio" name="mode" value="credit"><span><b>Use one time credit</b><small>Your balance: {{ g.user['credits'] }}</small></span></label>
+            </fieldset>
+            <label data-offered-skill>What will you teach in return?
+                <select name="offered_skill_id" required>
+                    <option value="">Choose one of your skills</option>
+                    {% for skill in my_offers %}
+                        <option value="{{ skill['id'] }}">{{ skill['name'] }}{% if skill['name'].casefold() in recipient_wants %} · they want this{% endif %}</option>
+                    {% endfor %}
+                </select>
+                {% if not my_offers %}<small class="error-text">You must add an offered skill before proposing a direct swap.</small>{% endif %}
+            </label>
+            <label>Preferred schedule<input name="preferred_schedule" maxlength="160" placeholder="For example: Thursday after 4pm"></label>
+            <label>Message<textarea name="message" maxlength="500" rows="5" placeholder="Introduce yourself and explain what you would like to learn."></textarea><small><span data-character-count>0</span>/500 characters</small></label>
+            <div class="info-box"><span>i</span><p>The request must be accepted before a session starts. Both students confirm completion before reviews or credit transfer.</p></div>
+            <div class="button-row end"><a class="button button-secondary" href="{{ url_for('profile', user_id=requested_skill['owner_id']) }}">Cancel</a><button class="button button-primary" type="submit">Send request <span>→</span></button></div>
+        </form>
+    </div>
+</section>
+{% endblock %}

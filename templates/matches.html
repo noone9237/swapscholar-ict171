@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Your matches · SwapScholar{% endblock %}
+{% block content %}
+<section class="page-hero grid-bg">
+    <div class="shell">
+        <p class="eyebrow"><span></span> Smart matching</p>
+        <h1>Students with compatible skills.</h1>
+        <p>Mutual matches are ranked first: they teach something you want and want something you teach.</p>
+    </div>
+</section>
+<section class="section">
+    <div class="shell">
+        {% if not has_offers or not has_wants %}
+            <div class="notice-card">
+                <div class="notice-icon">!</div>
+                <div><h2>Complete both sides of your profile</h2><p>Add at least one offered skill and one wanted skill for stronger matching.</p></div>
+                <a class="button button-primary" href="{{ url_for('manage_skills') }}">Add skills</a>
+            </div>
+        {% endif %}
+        <div class="results-bar"><div><strong>{{ matches|length }}</strong> compatible student{{ '' if matches|length == 1 else 's' }}</div><a href="{{ url_for('browse') }}">Browse all skills →</a></div>
+        <div class="matches-list">
+            {% for match in matches %}
+                <article class="match-card">
+                    <div class="match-person">
+                        <span class="profile-avatar small">{{ match.user['name']|initials }}</span>
+                        <div><h2>{{ match.user['name'] }}</h2><p>{{ match.user['course'] or match.user['university'] }}</p><span>★ {{ '%.1f'|format(match.user['rating']) if match.user['review_count'] else 'New member' }}</span></div>
+                    </div>
+                    <div class="match-exchange">
+                        <div><small>They can teach you</small>{% for skill in match.they_teach %}<a href="{{ url_for('request_exchange', skill_id=skill['id']) }}">{{ skill['name'] }}</a>{% endfor %}</div>
+                        <span class="exchange-arrow">{{ '⇄' if match.mutual else '→' }}</span>
+                        <div><small>You can teach them</small>{% for skill in match.they_learn %}<span>{{ skill['name'] }}</span>{% else %}<span class="muted">Use one time credit</span>{% endfor %}</div>
+                    </div>
+                    <div class="match-actions">
+                        <span class="{{ 'match-pill' if match.mutual else 'category-chip' }}">{{ 'Mutual match' if match.mutual else 'Credit match' }}</span>
+                        <a class="button button-primary" href="{{ url_for('request_exchange', skill_id=match.they_teach[0]['id']) }}">Start request</a>
+                        <a class="text-link" href="{{ url_for('profile', user_id=match.user['id']) }}">View profile</a>
+                    </div>
+                </article>
+            {% else %}
+                <article class="empty-card">
+                    <div class="empty-icon">⇄</div><h2>No matches yet</h2>
+                    <p>Add more learning goals or browse all offered skills to make a one-credit request.</p>
+                    <div class="button-row center"><a class="button button-primary" href="{{ url_for('manage_skills') }}">Add skills</a><a class="button button-secondary" href="{{ url_for('browse') }}">Browse skills</a></div>
+                </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}How it works · SwapScholar{% endblock %}
+{% block content %}
+<section class="page-hero grid-bg">
+    <div class="shell"><p class="eyebrow"><span></span> The SwapScholar model</p><h1>One platform, two ways to learn.</h1><p>Arrange a direct skill swap or use time credits when a mutual match is not available.</p></div>
+</section>
+<section class="section">
+    <div class="shell">
+        <div class="mode-grid">
+            <article class="mode-card featured"><span>⇄</span><p class="eyebrow">Mutual skill swap</p><h2>Teach each other.</h2><p>You offer a skill the other student wants and request one of theirs in return. No credits are used.</p><ul><li>Best for mutual matches</li><li>Both students are teacher and learner</li><li>One shared completion workflow</li></ul></article>
+            <article class="mode-card"><span>◆</span><p class="eyebrow">Time-credit lesson</p><h2>Keep value moving.</h2><p>Spend one credit to learn. After both students confirm completion, the teacher earns that credit.</p><ul><li>Every account starts with two credits</li><li>Useful when no direct swap exists</li><li>Credits transfer only after completion</li></ul></article>
+        </div>
+        <div class="timeline">
+            <article><b>1</b><div><h3>Create a student profile</h3><p>Register securely, explain your study area and add availability.</p></div></article>
+            <article><b>2</b><div><h3>Add offered and wanted skills</h3><p>This provides the data used by SwapScholar’s matching logic.</p></div></article>
+            <article><b>3</b><div><h3>Browse or match</h3><p>Search skills directly or use the mutual-match page to find compatible students.</p></div></article>
+            <article><b>4</b><div><h3>Send and accept a request</h3><p>Choose a swap or credit, propose a schedule and wait for the teacher’s decision.</p></div></article>
+            <article><b>5</b><div><h3>Confirm and review</h3><p>Both students confirm completion before reviews and any credit transfer become available.</p></div></article>
+        </div>
+    </div>
+</section>
+<section class="section section-tinted">
+    <div class="shell trust-grid"><div><p class="eyebrow"><span></span> Built for student data</p><h2>A small but real backend application.</h2><p>Accounts, password hashes, profiles, requests, status changes, credits and reviews are stored in SQLite on the Azure server. Server-side validation and permission checks protect each workflow.</p></div><div class="tech-stack"><span>Azure VM</span><span>Ubuntu</span><span>Apache</span><span>Flask</span><span>SQLite</span><span>HTTPS</span></div></div>
+</section>
+{% endblock %}

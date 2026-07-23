@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+{% block title %}SwapScholar · Student skill exchange{% endblock %}
+
+{% block content %}
+<section class="hero grid-bg">
+    <div class="shell hero-grid">
+        <div class="hero-copy">
+            <p class="eyebrow"><span></span> Student skill exchange platform</p>
+            <h1><strong>Swap</strong><span>Scholar</span></h1>
+            <p class="hero-tagline">Teach what you know. Learn what you need.</p>
+            <p class="hero-summary">
+                Connect with university students, exchange practical skills and build
+                trusted learning relationships—without expensive tutoring.
+            </p>
+            <div class="button-row">
+                {% if g.user %}
+                    <a class="button button-primary" href="{{ url_for('matches') }}">Find my matches <span>→</span></a>
+                    <a class="button button-secondary" href="{{ url_for('manage_skills') }}">Manage my skills <span>+</span></a>
+                {% else %}
+                    <a class="button button-primary" href="{{ url_for('register') }}">Create free account <span>→</span></a>
+                    <a class="button button-secondary" href="{{ url_for('browse') }}">Browse skills <span>↗</span></a>
+                {% endif %}
+            </div>
+            <div class="hero-stats" aria-label="Platform statistics">
+                <div><strong>{{ stats.students }}</strong><span>Students</span></div>
+                <div><strong>{{ stats.skills }}</strong><span>Skills offered</span></div>
+                <div><strong>{{ stats.completed }}</strong><span>Swaps completed</span></div>
+            </div>
+        </div>
+
+        <div class="exchange-preview" aria-label="Example mutual skill exchange">
+            <div class="preview-head">
+                <h2>Skill exchange preview</h2>
+                <span class="match-pill"><i></i> Match found</span>
+            </div>
+            <article class="student-preview">
+                <div class="avatar avatar-a">A</div>
+                <div><strong>Student A</strong><small>University community</small></div>
+                <div class="skill-flow">
+                    <span>Python programming</span><b>→</b><span>Photoshop help</span>
+                </div>
+            </article>
+            <div class="mutual-label">Mutual exchange</div>
+            <article class="student-preview">
+                <div class="avatar avatar-b">B</div>
+                <div><strong>Student B</strong><small>University community</small></div>
+                <div class="skill-flow">
+                    <span>Photoshop help</span><b>←</b><span>Python programming</span>
+                </div>
+            </article>
+            <span class="floating-tag tag-one">Offer Python</span>
+            <span class="floating-tag tag-two">Learn Photoshop</span>
+        </div>
+    </div>
+</section>
+
+<section class="section story-section">
+    <div class="shell story-grid">
+        <div class="story-copy">
+            <p class="eyebrow"><span></span> Why SwapScholar?</p>
+            <h2>Learning support should not depend on your budget.</h2>
+            <p class="lead-copy">Students already hold valuable knowledge. SwapScholar turns that knowledge into a trusted campus resource, connecting people who can help each other grow.</p>
+            <a class="text-link" href="{{ url_for('how_it_works') }}">Explore the complete workflow →</a>
+        </div>
+        <div class="impact-grid">
+            <article><span class="impact-number">01</span><h3>Remove the cost barrier</h3><p>Exchange skills directly or use earned time credits instead of paying tutoring fees.</p></article>
+            <article><span class="impact-number">02</span><h3>Find relevant peers</h3><p>Search by skill and category, then discover mutual matches based on what each student offers and wants.</p></article>
+            <article><span class="impact-number">03</span><h3>Learn by teaching</h3><p>Strengthen your own knowledge while helping another student reach a practical goal.</p></article>
+            <article><span class="impact-number">04</span><h3>Build campus connection</h3><p>Create useful learning relationships across courses, interests and experience levels.</p></article>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="shell">
+        <div class="section-heading split-heading">
+            <div>
+                <p class="eyebrow"><span></span> Discover</p>
+                <h2>Skills shared by students</h2>
+            </div>
+            <a class="text-link" href="{{ url_for('browse') }}">View every skill →</a>
+        </div>
+        <div class="card-grid four">
+            {% for skill in featured %}
+                <article class="skill-card">
+                    <div class="card-topline">
+                        <span class="category-chip">{{ skill['category'] }}</span>
+                        {% if skill['review_count'] %}
+                            <span class="rating">★ {{ '%.1f'|format(skill['rating']) }}</span>
+                        {% else %}
+                            <span class="rating muted">New</span>
+                        {% endif %}
+                    </div>
+                    <h3>{{ skill['name'] }}</h3>
+                    <p>{{ skill['description'] or 'A student-led session tailored to your goals.' }}</p>
+                    <a class="person-line" href="{{ url_for('profile', user_id=skill['user_id']) }}">
+                        <span class="mini-avatar">{{ skill['user_name']|initials }}</span>
+                        <span><strong>{{ skill['user_name'] }}</strong><small>{{ skill['university'] }}</small></span>
+                    </a>
+                </article>
+            {% else %}
+                <article class="empty-card span-all">
+                    <h3>Be the first to offer a skill</h3>
+                    <p>Create an account and help this student community grow.</p>
+                </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section categories-section">
+    <div class="shell">
+        <div class="section-heading center">
+            <p class="eyebrow centered"><span></span> Explore your interests</p>
+            <h2>One community, many ways to learn</h2>
+            <p>Start with a category, then filter the live skill directory to find the right student.</p>
+        </div>
+        <div class="category-grid">
+            {% for category, icon, description in [
+                ('Technology', '</>', 'Coding, data and digital tools'),
+                ('Arts & Design', '◇', 'Creative software and visual craft'),
+                ('Languages', 'Aa', 'Conversation and language practice'),
+                ('Business', '↗', 'Planning, finance and enterprise'),
+                ('Communication', '◌', 'Speaking, writing and presentation'),
+                ('Academic', '∑', 'Study methods and subject support')
+            ] %}
+                <a class="category-card" href="{{ url_for('browse', category=category) }}">
+                    <span class="category-icon">{{ icon }}</span>
+                    <h3>{{ category }}</h3>
+                    <p>{{ description }}</p>
+                    <b>Browse skills →</b>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section section-tinted">
+    <div class="shell">
+        <div class="section-heading center">
+            <p class="eyebrow centered"><span></span> Simple and trusted</p>
+            <h2>From profile to completed exchange</h2>
+            <p>SwapScholar keeps the entire student-learning journey in one clear workflow.</p>
+        </div>
+        <div class="steps-grid">
+            <article><span>01</span><div class="step-icon">＋</div><h3>Build your profile</h3><p>List the skills you can teach and what you want to learn.</p></article>
+            <article><span>02</span><div class="step-icon">⌕</div><h3>Find a match</h3><p>Search the community or use mutual skill matching.</p></article>
+            <article><span>03</span><div class="step-icon">⇄</div><h3>Arrange the swap</h3><p>Send a request, agree a schedule and learn together.</p></article>
+            <article><span>04</span><div class="step-icon">★</div><h3>Build trust</h3><p>Confirm completion, earn credits and leave a useful review.</p></article>
+        </div>
+    </div>
+</section>
+
+<section class="section exchange-modes-section">
+    <div class="shell">
+        <div class="section-heading split-heading">
+            <div>
+                <p class="eyebrow"><span></span> Flexible exchange</p>
+                <h2>Two fair ways to learn</h2>
+            </div>
+            <p class="heading-note">Choose a direct skill swap when both students match, or use a time credit when they do not.</p>
+        </div>
+        <div class="mode-home-grid">
+            <article class="mode-home-card mode-featured">
+                <span class="mode-label">Mutual skill swap</span>
+                <div class="mode-symbol">⇄</div>
+                <h3>You teach each other.</h3>
+                <p>You offer a skill your match wants and request one of theirs in return. No credits are needed.</p>
+                <ul><li>Matched offer and learning goals</li><li>Both students teach and learn</li><li>One shared completion process</li></ul>
+            </article>
+            <article class="mode-home-card">
+                <span class="mode-label">Time-credit exchange</span>
+                <div class="mode-symbol">◷</div>
+                <h3>Teach now. Learn later.</h3>
+                <p>Help a student, earn one time credit after both sides confirm completion, then spend it on another skill.</p>
+                <ul><li>Works without a mutual match</li><li>Credits move only after confirmation</li><li>Your knowledge remains valuable</li></ul>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section class="section trust-section">
+    <div class="shell trust-grid">
+        <div>
+            <p class="eyebrow"><span></span> Trust by design</p>
+            <h2>A clear workflow protects both students.</h2>
+            <p class="lead-copy">SwapScholar keeps requests, completion and feedback visible in one place. Sensitive account data is handled on the server rather than exposed in the browser.</p>
+            <div class="trust-badges">
+                <span>HTTPS ready</span><span>Server-side validation</span><span>CSRF protected</span>
+            </div>
+        </div>
+        <div class="trust-list">
+            <article><span>01</span><div><h3>Protected accounts</h3><p>Passwords are stored as secure hashes and sessions use protected cookies.</p></div></article>
+            <article><span>02</span><div><h3>Two-sided completion</h3><p>An exchange completes only after both students confirm it.</p></div></article>
+            <article><span>03</span><div><h3>Verified feedback</h3><p>Reviews can be submitted only by participants in a completed exchange.</p></div></article>
+        </div>
+    </div>
+</section>
+
+<section class="section proof-section">
+    <div class="shell">
+        <div class="section-heading center">
+            <p class="eyebrow centered"><span></span> Platform activity</p>
+            <h2>Built as a real working community</h2>
+            <p>These figures are read directly from the live SwapScholar database.</p>
+        </div>
+        <div class="proof-grid">
+            <article><strong>{{ stats.students }}</strong><span>Registered students</span></article>
+            <article><strong>{{ stats.skills }}</strong><span>Skills offered</span></article>
+            <article><strong>{{ stats.categories }}</strong><span>Active categories</span></article>
+            <article><strong>{{ stats.active }}</strong><span>Active exchanges</span></article>
+            <article><strong>{{ stats.completed }}</strong><span>Completed swaps</span></article>
+            <article><strong>{{ stats.reviews }}</strong><span>Verified reviews</span></article>
+        </div>
+        <div class="stack-strip" aria-label="Application technology">
+            <span>Microsoft Azure VM</span><i></i><span>Ubuntu</span><i></i><span>Apache</span><i></i><span>Flask</span><i></i><span>SQLite</span><i></i><span>HTTPS ready</span>
+        </div>
+    </div>
+</section>
+
+<section class="section faq-section">
+    <div class="shell faq-grid">
+        <div>
+            <p class="eyebrow"><span></span> Questions answered</p>
+            <h2>Everything you need to start swapping.</h2>
+            <p>Still exploring? Browse the public skill directory before creating an account.</p>
+            <a class="button button-secondary" href="{{ url_for('browse') }}">Browse available skills <span>↗</span></a>
+        </div>
+        <div class="faq-list">
+            <details open><summary>Is SwapScholar free to use?<span>+</span></summary><p>Yes. The platform is designed for student-to-student learning through mutual exchanges and time credits, not paid tutoring.</p></details>
+            <details><summary>How does a mutual match work?<span>+</span></summary><p>A mutual match appears when you offer something another student wants and they offer something you want.</p></details>
+            <details><summary>When is a time credit transferred?<span>+</span></summary><p>The credit transfers only after both students mark the accepted exchange as completed.</p></details>
+            <details><summary>Can anyone leave a review?<span>+</span></summary><p>No. Only students who participated in a completed exchange can review one another.</p></details>
+            <details><summary>What happens after I create an account?<span>+</span></summary><p>Add your profile and skills, browse or open your recommended matches, then send your first exchange request.</p></details>
+        </div>
+    </div>
+</section>
+
+<section class="section cta-section">
+    <div class="shell cta-card">
+        <div>
+            <p class="eyebrow"><span></span> Start swapping</p>
+            <h2>Your next teacher may already be on campus.</h2>
+            <p>Join the skill exchange and turn what you know into something another student needs.</p>
+        </div>
+        <a class="button button-primary" href="{{ url_for('register') if not g.user else url_for('matches') }}">
+            {{ 'Join SwapScholar' if not g.user else 'See my matches' }} <span>→</span>
+        </a>
+    </div>
+</section>
+{% endblock %}

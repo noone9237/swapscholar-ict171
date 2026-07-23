@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}{{ code }} · SwapScholar{% endblock %}
+{% block content %}
+<section class="error-section grid-bg">
+    <div class="shell"><span class="error-code">{{ code }}</span><p class="eyebrow centered"><span></span> Something went wrong</p><h1>{{ title }}</h1><p>{{ message }}</p><div class="button-row center"><a class="button button-primary" href="{{ url_for('home') }}">Return home</a><a class="button button-secondary" href="{{ url_for('browse') }}">Browse skills</a></div></div>
+</section>
+{% endblock %}

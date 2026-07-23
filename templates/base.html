@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="SwapScholar helps university students teach what they know and learn what they need.">
+    <meta name="theme-color" content="#071d2a">
+    <title>{% block title %}SwapScholar{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+</head>
+<body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+
+    <div class="server-strip">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span>Server IP: <strong>{{ server_public_ip }}</strong></span>
+        <span class="server-divider" aria-hidden="true">•</span>
+        <span>Microsoft Azure · Ubuntu + Apache + Flask + SQLite</span>
+    </div>
+
+    <header class="site-header">
+        <div class="shell nav-wrap">
+            <a class="brand" href="{{ url_for('home') }}" aria-label="SwapScholar home">
+                <span class="brand-mark" aria-hidden="true">⇄</span>
+                <span>Swap<span>Scholar</span></span>
+            </a>
+
+            <button class="menu-button" type="button" aria-expanded="false" aria-controls="site-nav">
+                <span></span><span></span><span></span>
+                <span class="sr-only">Open navigation</span>
+            </button>
+
+            <nav id="site-nav" class="site-nav" aria-label="Primary navigation">
+                <a class="{{ 'active' if request.endpoint == 'home' }}" href="{{ url_for('home') }}">Home</a>
+                <a class="{{ 'active' if request.endpoint == 'browse' }}" href="{{ url_for('browse') }}">Browse skills</a>
+                {% if g.user %}
+                    <a class="{{ 'active' if request.endpoint == 'matches' }}" href="{{ url_for('matches') }}">Matches</a>
+                    <a class="{{ 'active' if request.endpoint == 'dashboard' }}" href="{{ url_for('dashboard') }}">
+                        Dashboard
+                        {% if g.user %}
+                            <span class="nav-notice" title="Your time credits">{{ g.user['credits'] }}</span>
+                        {% endif %}
+                    </a>
+                    <a class="{{ 'active' if request.endpoint in ['profile', 'edit_profile', 'manage_skills'] }}"
+                       href="{{ url_for('profile', user_id=g.user['id']) }}">Profile</a>
+                    <form action="{{ url_for('logout') }}" method="post" class="nav-form">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                        <button class="nav-link-button" type="submit">Log out</button>
+                    </form>
+                {% else %}
+                    <a class="{{ 'active' if request.endpoint == 'how_it_works' }}" href="{{ url_for('how_it_works') }}">How it works</a>
+                    <a href="{{ url_for('login') }}">Log in</a>
+                    <a class="nav-cta" href="{{ url_for('register') }}">Join free</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="shell flash-stack" aria-live="polite">
+                {% for category, message in messages %}
+                    <div class="flash flash-{{ category }}">
+                        <span>{{ message }}</span>
+                        <button type="button" class="flash-close" aria-label="Dismiss message">×</button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <main id="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="shell footer-grid">
+            <div>
+                <a class="brand brand-footer" href="{{ url_for('home') }}">
+                    <span class="brand-mark" aria-hidden="true">⇄</span>
+                    <span>Swap<span>Scholar</span></span>
+                </a>
+                <p>Teach what you know. Learn what you need.</p>
+            </div>
+            <div class="footer-links">
+                <a href="{{ url_for('browse') }}">Browse skills</a>
+                <a href="{{ url_for('how_it_works') }}">How it works</a>
+                <a href="{{ url_for('statistics') }}">Statistics</a>
+            </div>
+            <div class="footer-meta">
+                <span>ICT171 Cloud Server Project</span>
+                <span>Student ID 36018014</span>
+                <span>© 2026 SwapScholar</span>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

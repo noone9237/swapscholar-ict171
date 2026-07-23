@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · SwapScholar{% endblock %}
+{% block content %}
+<section class="dashboard-hero grid-bg">
+    <div class="shell">
+        <div><p class="eyebrow"><span></span> Member dashboard</p><h1>Welcome back, {{ g.user['name'].split()[0] }}.</h1><p>Manage requests, complete exchanges and keep building your learning network.</p></div>
+        <a class="button button-primary" href="{{ url_for('browse') }}">Find a new skill <span>→</span></a>
+    </div>
+</section>
+<section class="section dashboard-section">
+    <div class="shell">
+        <div class="stat-cards">
+            <article><span class="stat-icon">✉</span><div><strong>{{ counts.pending }}</strong><small>New requests</small></div></article>
+            <article><span class="stat-icon purple">⇄</span><div><strong>{{ counts.matches }}</strong><small>Skill matches</small></div></article>
+            <article><span class="stat-icon amber">✓</span><div><strong>{{ counts.completed }}</strong><small>Completed swaps</small></div></article>
+            <article><span class="stat-icon mint">◆</span><div><strong>{{ g.user['credits'] }}</strong><small>Time credits</small></div></article>
+        </div>
+        <div class="dashboard-layout">
+            <aside class="dashboard-sidebar">
+                <a class="side-profile" href="{{ url_for('profile', user_id=g.user['id']) }}"><span class="profile-avatar small">{{ g.user['name']|initials }}</span><div><strong>{{ g.user['name'] }}</strong><small>View public profile →</small></div></a>
+                <nav aria-label="Dashboard sections">
+                    <a href="#incoming">Incoming requests <span>{{ incoming|length }}</span></a>
+                    <a href="#outgoing">Sent requests <span>{{ outgoing|length }}</span></a>
+                    <a href="{{ url_for('matches') }}">My matches <span>→</span></a>
+                    <a href="{{ url_for('manage_skills') }}">Manage skills <span>→</span></a>
+                    <a href="{{ url_for('edit_profile') }}">Edit profile <span>→</span></a>
+                </nav>
+                <div class="credit-explainer"><span>◆</span><strong>How credits work</strong><p>Spend one credit to learn without a direct swap. The teacher earns it after both students confirm completion.</p></div>
+            </aside>
+            <div class="dashboard-content">
+                <section id="incoming">
+                    <div class="subheading"><div><p class="eyebrow"><span></span> Your inbox</p><h2>Incoming requests</h2></div><span>{{ incoming|length }}</span></div>
+                    <div class="exchange-list">
+                        {% for exchange in incoming %}{% set direction = 'incoming' %}{% include "_exchange_card.html" %}{% else %}<div class="empty-inline large">You have no incoming requests. Keep your offered skills updated so students can find you.</div>{% endfor %}
+                    </div>
+                </section>
+                <section id="outgoing">
+                    <div class="subheading"><div><p class="eyebrow"><span></span> Sent by you</p><h2>Outgoing requests</h2></div><span>{{ outgoing|length }}</span></div>
+                    <div class="exchange-list">
+                        {% for exchange in outgoing %}{% set direction = 'outgoing' %}{% include "_exchange_card.html" %}{% else %}<div class="empty-inline large">You have not sent any requests yet. Browse skills to start an exchange.</div>{% endfor %}
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

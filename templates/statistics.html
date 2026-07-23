@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Community statistics · SwapScholar{% endblock %}
+{% block content %}
+<section class="page-hero grid-bg">
+    <div class="shell"><p class="eyebrow"><span></span> Live platform data</p><h1>SwapScholar by the numbers.</h1><p>Simple, privacy-aware statistics generated from the SQLite application database.</p></div>
+</section>
+<section class="section">
+    <div class="shell">
+        <div class="stat-cards five">
+            <article><span class="stat-icon">●</span><div><strong>{{ stats.students }}</strong><small>Students</small></div></article>
+            <article><span class="stat-icon purple">↑</span><div><strong>{{ stats.offered }}</strong><small>Skills offered</small></div></article>
+            <article><span class="stat-icon amber">⇄</span><div><strong>{{ stats.active }}</strong><small>Active exchanges</small></div></article>
+            <article><span class="stat-icon mint">✓</span><div><strong>{{ stats.completed }}</strong><small>Completed</small></div></article>
+            <article><span class="stat-icon rose">★</span><div><strong>{{ stats.reviews }}</strong><small>Reviews</small></div></article>
+        </div>
+        <div class="analytics-grid">
+            <section class="panel">
+                <div class="subheading"><div><p class="eyebrow"><span></span> Categories</p><h2>Most shared skills</h2></div></div>
+                <div class="bar-list">
+                    {% for category in categories %}
+                        <div><p><strong>{{ category['category'] }}</strong><span>{{ category['total'] }}</span></p><i><b style="width: {{ (category['total'] / max_category * 100)|round }}%"></b></i></div>
+                    {% else %}<div class="empty-inline">No category data yet.</div>{% endfor %}
+                </div>
+            </section>
+            <section class="panel">
+                <div class="subheading"><div><p class="eyebrow"><span></span> Community</p><h2>Trusted members</h2></div></div>
+                <div class="leader-list">
+                    {% for member in top_members %}
+                        <a href="{{ url_for('profile', user_id=member['id']) }}"><span class="mini-avatar">{{ member['name']|initials }}</span><p><strong>{{ member['name'] }}</strong><small>{{ member['completed_count'] }} completed exchanges</small></p><em>★ {{ '%.1f'|format(member['rating']) if member['review_count'] else 'New' }}</em></a>
+                    {% else %}<div class="empty-inline">No member data yet.</div>{% endfor %}
+                </div>
+            </section>
+        </div>
+    </div>
+</section>
+{% endblock %}

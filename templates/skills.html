@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Manage skills · SwapScholar{% endblock %}
+{% block content %}
+<section class="page-hero slim grid-bg">
+    <div class="shell page-hero-split">
+        <div><p class="eyebrow"><span></span> Your learning profile</p><h1>What can you share?</h1><p>Add both sides of your exchange to unlock stronger mutual matches.</p></div>
+        <div class="credit-card"><span>◆</span><div><small>Time credit balance</small><strong>{{ g.user['credits'] }}</strong></div></div>
+    </div>
+</section>
+<section class="section">
+    <div class="shell skills-layout">
+        <form method="post" class="form-card stack-form sticky-card">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+            <div><p class="eyebrow"><span></span> Add a skill</p><h2>Update your profile</h2></div>
+            <fieldset class="choice-row">
+                <legend>What type of skill is this?</legend>
+                <label><input type="radio" name="direction" value="offer" checked><span><b>I can teach</b><small>Add to offered skills</small></span></label>
+                <label><input type="radio" name="direction" value="want"><span><b>I want to learn</b><small>Add to learning goals</small></span></label>
+            </fieldset>
+            <label>Skill name<input name="name" maxlength="80" required placeholder="For example: Python programming"></label>
+            <div class="form-grid">
+                <label>Category<select name="category" required><option value="">Choose category</option>{% for category in skill_categories %}<option>{{ category }}</option>{% endfor %}</select></label>
+                <label>Level<input name="level" maxlength="40" placeholder="Beginner, intermediate…"></label>
+            </div>
+            <label>Description<textarea name="description" maxlength="320" rows="4" placeholder="What could a session cover?"></textarea></label>
+            <button class="button button-primary full" type="submit">Add skill <span>+</span></button>
+        </form>
+        <div class="skill-lists">
+            <section class="panel">
+                <div class="subheading"><div><p class="eyebrow"><span></span> Teach</p><h2>Skills you offer</h2></div><span>{{ offers|length }}</span></div>
+                <div class="manage-list">
+                    {% for skill in offers %}
+                        <article>
+                            <div class="skill-icon">↑</div>
+                            <div><h3>{{ skill['name'] }}</h3><p>{{ skill['category'] }}{% if skill['level'] %} · {{ skill['level'] }}{% endif %}</p></div>
+                            <form method="post" action="{{ url_for('delete_skill', skill_id=skill['id']) }}">
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                                <button class="icon-button danger" type="submit" data-confirm="Remove this skill from your profile?" aria-label="Remove {{ skill['name'] }}">×</button>
+                            </form>
+                        </article>
+                    {% else %}<div class="empty-inline">Add at least one offered skill to take part in swaps.</div>{% endfor %}
+                </div>
+            </section>
+            <section class="panel">
+                <div class="subheading"><div><p class="eyebrow"><span></span> Learn</p><h2>Skills you want</h2></div><span>{{ wants|length }}</span></div>
+                <div class="manage-list">
+                    {% for skill in wants %}
+                        <article>
+                            <div class="skill-icon purple">↓</div>
+                            <div><h3>{{ skill['name'] }}</h3><p>{{ skill['category'] }}{% if skill['level'] %} · {{ skill['level'] }}{% endif %}</p></div>
+                            <form method="post" action="{{ url_for('delete_skill', skill_id=skill['id']) }}">
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                                <button class="icon-button danger" type="submit" data-confirm="Remove this skill from your profile?" aria-label="Remove {{ skill['name'] }}">×</button>
+                            </form>
+                        </article>
+                    {% else %}<div class="empty-inline">Add what you want to learn so matching can find teachers.</div>{% endfor %}
+                </div>
+            </section>
+        </div>
+    </div>
+</section>
+{% endblock %}

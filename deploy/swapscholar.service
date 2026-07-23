@@ -1,0 +1,25 @@
+[Unit]
+Description=SwapScholar Gunicorn application
+After=network.target
+
+[Service]
+Type=notify
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/swapscholar
+EnvironmentFile=/etc/swapscholar.env
+ExecStart=/var/www/swapscholar/venv/bin/gunicorn \
+    --workers 2 \
+    --bind 127.0.0.1:8000 \
+    --access-logfile - \
+    --error-logfile - \
+    wsgi:app
+Restart=on-failure
+RestartSec=5
+PrivateTmp=true
+NoNewPrivileges=true
+ProtectSystem=full
+ReadWritePaths=/var/www/swapscholar/instance
+
+[Install]
+WantedBy=multi-user.target
