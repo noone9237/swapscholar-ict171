@@ -41,7 +41,7 @@ Date checked: 23 July 2026
 
 ### 1. Functional workflow tests
 
-Seven automated tests pass:
+Eight automated tests pass:
 
 - Public pages and seeded content
 - Registration, password hashing and starting credits
@@ -50,6 +50,7 @@ Seven automated tests pass:
 - Complete direct-swap workflow and review
 - Credit reservation and final transfer
 - Rejection of an action by an unrelated user
+- Rejection of private chat access by pending and unrelated users
 
 ### 2. Static code review
 
@@ -94,5 +95,29 @@ SQLite database. The following routes returned HTTP 200:
 - The SQLite instance directory is the only application directory granted
   write access by the system service.
 
-The package is ready to upload, but the live Azure VM has not been changed by
-these local verification steps.
+### 6. Live production verification
+
+The completed application was deployed to:
+
+`https://swapscholar36018014.japaneast.cloudapp.azure.com/`
+
+The live workflow was manually demonstrated using two different student
+accounts:
+
+- Account registration and secure login
+- Profile and offered/wanted skill updates
+- Request creation, receipt and acceptance
+- Private messages sent by both participants
+- Independent completion confirmation
+- Review availability after completion
+
+The maintenance script was installed at
+`/usr/local/sbin/swapscholar-maintenance` and returned:
+
+- SwapScholar service active
+- Apache service active
+- Public HTTPS response `200`
+- TLS certificate valid for more than 14 days
+- SQLite integrity result `ok`
+- Timestamped database backup created with SHA-256 checksum
+- Summary: `6 passed, 0 failed`
